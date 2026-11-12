@@ -46,7 +46,7 @@
   \end{mdframed}%
 }
 
-\title{11 分钟学会 tsqx}
+\title{10 分钟学会 tsqx}
 \author{LeyuDame}
 \date{\today}
 
@@ -358,7 +358,7 @@ F = extension A D C E
 ~triangle A B C
 \end{lstlisting}
 
-这一行会自动在单位圆上取三个合适的点作为 $A$、$B$、$C$, 生成一个不太丑、不太特殊的三角形, 并设置好画图尺寸。你完全不需要关心具体数值, 直接在后面写构造就行。
+这一行会自动在单位圆上取三个合适的点作为 $A$、$B$、$C$, 生成一个不太特殊的三角形。输出尺寸由 Asymptote 的 \texttt{size()} 设定, 并非由这条命令决定。你完全不需要关心具体数值, 直接在后面写构造就行。
 
 \textbf{等价写法: }\texttt{\~{}triangle A B C} 实际上是以下三行的简写——Evan Chen 预设了三个固定方向角, 使三角形形状匀称、不过于特殊:
 \begin{lstlisting}[language={}]
@@ -647,7 +647,7 @@ asy -f pdf -o test test.asy
 
 \section{一些实用的小贴士}
 \begin{itemize}
-	\item 用 \texttt{tsqx --help} 查看所有命令行选项；\texttt{-p} 表示输出不带 \texttt{size()} 的纯代码, 适合嵌入已有的 \texttt{asy} 文件
+	\item 用 \texttt{tsqx --help} 查看所有命令行选项；\texttt{-p}（\texttt{--pre}）表示\emph{添加}包括 \texttt{size()} 在内的 Asymptote 前导代码, 适合独立编译 PDF；嵌入已有 \texttt{asy} 环境时通常不使用该参数
 	\item 养成习惯: 先把构造写对, 确认图形正确, 再来美化(颜色、线宽、标签)——别在一张画错的图上浪费时间调颜色
 	\item 如果某个构造 tsqx 没有内置, \texttt{X = (A+B)/2} 这样直接嵌入 Asymptote 表达式的写法是支持的
 	\item 一定要保留 \texttt{.tsqx} 源文件, 不要只存 \texttt{.asy}——万一以后需要修改, 有源文件会方便很多

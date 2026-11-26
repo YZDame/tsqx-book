@@ -1,13 +1,18 @@
-# Fact 5 风格示意
-A = dir 110
+# 示例 3：鸡爪定理（Fact 5）构型
+A = dir 112
 B = dir 210
 C = dir 330
-I = incenter A B C
-L 230 = dir 270
-IA 315 = (2*L-I)
+I 35 = incenter A B C
+L 270 = dir 270
+I_A 290 = (2*L-I)
+!check_equal_dist(L, B, L, I, "LB = LI");
+!check_equal_dist(L, C, L, I, "LC = LI");
+!check_equal_dist(L, I, L, I_A, "LI = LI_A");
 
-A--B--C--cycle / 0.1 lightcyan / gray
-B--L--C--cycle 
-unitcircle / blue
-CP L I / 0.15 lightgreen / darkgreen
-A--I / red
+unitcircle / circ
+CP L I / fill2 / circ2
+A--B--C--cycle / fill1 / given
+B--L--C / aux
+A--I_A / key
+B--I / aux2
+C--I / aux2

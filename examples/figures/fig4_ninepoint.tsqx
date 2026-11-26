@@ -1,0 +1,26 @@
+# 示例 4：九点圆（中点、垂足与欧拉中点共圆）
+A = dir 118
+B = dir 210
+C = dir 330
+H 165 = orthocenter A B C
+M_a 270 = midpoint B--C
+M_b 35 = midpoint C--A
+M_c 145 = midpoint A--B
+D 260 = foot A B C
+E 15 = foot B C A
+F 170 = foot C A B
+K_a 40 = midpoint A--H
+K_b 200 = midpoint B--H
+K_c 320 = midpoint C--H
+N 10 = circumcenter M_a M_b M_c
+!check_cyclic(M_a, M_b, M_c, D, "D on nine-point circle");
+!check_cyclic(M_a, M_b, M_c, E, "E on nine-point circle");
+!check_cyclic(M_a, M_b, M_c, K_a, "K_a on nine-point circle");
+
+circumcircle A B C / circ
+circumcircle M_a M_b M_c / fill2 / key
+A--B--C--cycle / fill1 / given
+A--D / aux
+B--E / aux
+C--F / aux
+M_a--M_b--M_c--cycle / aux2

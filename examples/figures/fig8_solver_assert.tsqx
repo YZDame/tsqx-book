@@ -1,0 +1,25 @@
+# 示例 8：隐式角度条件的数值二分求解与断言验证
+A = dir 140
+B = dir 200
+C = dir 340
+!real angleDeg(pair U, pair V, pair W) {
+!  real c = dot(unit(U-V), unit(W-V));
+!  return degrees(acos(max(-1, min(1, c))));
+!}
+!real f(real t) {
+!  pair X = B + t*(C - B);
+!  return angleDeg(B, A, X) - 2*angleDeg(A, C, B);
+!}
+!real lo = 0.01, hi = 0.99;
+!for (int i = 0; i < 60; ++i) {
+!  real mid = 0.5*(lo + hi);
+!  if (f(lo)*f(mid) <= 0) hi = mid; else lo = mid;
+!}
+!pair pP = B + 0.5*(lo + hi)*(C - B);
+P 270 = pP
+!assert(abs(angleDeg(B, A, P) - 2*angleDeg(A, C, B)) < 1e-6, "angle BAP = 2 angle ACB");
+
+A--B--C--cycle / fill1 / given
+A--P / key
+anglemark B A P / accent
+anglemark A C B / circ

@@ -1,0 +1,27 @@
+# 示例 6：外接圆切线、陪位中线与 otherPt 避坑示范
+A = dir 112
+B = dir 210
+C = dir 330
+O 15 = circumcenter A B C
+M 235 = midpoint B--C
+!path w = circumcircle(A, B, C);
+T 270 = extension B (perpPt B O B) C (perpPt C O C)
+K 245 = otherPt w A T
+D 300 = otherPt w A M
+!check_perp(O, B, B, T, "OB perp BT");
+!check_perp(O, C, C, T, "OC perp CT");
+!check_on_circle(K, O, A, "K on circumcircle");
+!check_collinear(A, K, T, "A-K-T collinear");
+
+w / circ
+A--B--C--cycle / fill1 / given
+O--B / aux2
+O--C / aux2
+B--T--C / accent
+A--T / key
+A--D / aux
+B--K--C / aux2
+rightanglemark O B T / mark
+rightanglemark O C T / mark
+pathtick B M 1 / mark
+pathtick M C 1 / mark

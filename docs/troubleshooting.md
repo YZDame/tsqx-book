@@ -1,47 +1,44 @@
-# TSQX 编译与故障排查
+# TSQX 编译与故障排查手册
 
-## 环境与入口
+## 1. 环境自检
 
-**TSQX** 负责将 `.tsqx` 翻译为 `.asy`；**Asymptote** 将 `.asy` 编译为 PDF；**Poppler** 的 `pdftocairo` 只在某些 VS Code 预览/导出场景使用，并非 TSQX 到 PDF 的必备前提。
-
-```sh
+```bash
 python3 -m pip install tsqx
 tsqx --help
 asy --version
-pdftocairo -v # 需要 VS Code 的实时预览 / SVG、PNG 导出时再检查
+pdftocairo -v   # VS Code 实时 SVG 预览与 PNG 导出需要
+pdftoppm -v     # CLI 视觉核验 --check-png 需要
 ```
 
-`pip install tsqx` 安装的是上游 Python 包；本仓库随附的 `tsqx/` 是用于教学对照的源码副本，不保证与最新上游一致。
+如果 `asy --version` 低于 `2.69`，请先升级 TeX Live 或 Asymptote；如果遇到 `tsqx: command not found`，确认 `pip` 与运行时的 `python3` 是否属于同一环境，或改用 `python3 -m tsqx`。
 
-## 分阶段定位错误
+## 2. 分阶段定位常见错误
 
-先单独运行：
+先拆分两步运行，确认错误发生在 `tsqx` 翻译层还是 `asy` 渲染层：
 
-```sh
-tsqx -p < example.tsqx > example.asy
-asy -f pdf -o example example.asy
+```bash
+tsqx -p -s 7.5cm < figure.tsqx > figure.asy
+ASYMPTOTE_DIR=templates/tsqx asy -autoimport ldgeo -u classic -f pdf -o figure figure.asy
 ```
 
-| 现象 | 定位方式 | 常见原因 |
+| 现象 | 常见根因 | 解决方法 |
 | --- | --- | --- |
-| 找不到 `tsqx` | 检查当前 Python 环境及 PATH | `pip` 装在其他解释器环境 |
-| 找不到 `asy` | 使用 `asy --version` | 尚未安装 Asymptote 或 PATH 未配置 |
-| 生成的 ASY 不可编译 | 直接打开 `.asy` 查看 Asymptote 报错行 | 类型不匹配、路径无交点、表达式不合法 |
-| PDF 可输出但几何不对 | 对照题目约束与各构造定义 | 几何关系误解或选择了另一交点 |
-| VS Code 预览不可用 | 运行 **TSQX: Diagnose Toolchain** | 缺少 `pdftocairo` 或路径错误 |
-| LaTeX 中内嵌绘图失败 | 先验证单独的 `.asy` | 缺少前导定义、`-shell-escape` 或构建步骤 |
+| `draw(A--B, dashed, blue)` 报错 | 绘制样式漏写 `/` 分隔符 | 改为 `A--B / dashed blue` |
+| `gray(+0.5+)` 或 `rgb(+"..."+)` 语法错误 | 在 `/` 后写了带括号的 Asymptote 函数 | 改用 `ldgeo` 无括号语义变量（`aux`、`key`）或 `!draw(...)` |
+| `pair P = 2*A(-B)` 报错 | 减号两边留了空格 | 写成 `2*A-B` 或 `minus (2*A) B` |
+| `foot(...)*-(-)*foot(...)` 报错 | 两个括号表达式直接用 `--` 连接 | 先将两端点赋给变量 `D`、`E`，再写 `D--E` |
+| `no matching variable 'anglemark'` | 使用了仅存于 `olympiad.asy` 的 Wiki 函数 | 启用 `ldgeo.asy`（`scripts/build_tsqx.py` 或 `tsqx.theme`） |
+| `no matching variable 'given'` | 使用了语义令牌但未注入 `ldgeo.asy` | 编译时加 `-autoimport ldgeo` 与 `ASYMPTOTE_DIR`，或开启 VS Code 的 `tsqx.theme` |
+| 交点选到了已知顶点或另一支 | 误用 `OP` 当作“另一交点” | 改用 `ldgeo` 的 `otherPt c A B` 或 `other c l X` |
+| `assert FAILED: check_perp failed` | 几何构造不满足题设垂直/共圆/共线 | 恭喜：断言提前拦下了错图，请回查构造顺序与交点选择 |
+| 画面被拉得极扁、主三角形缩成一团 | 某条直线延长过长或交点跑飞到远处 | 调整初始顶点角度（避开近平行），或限制辅助线裁剪范围 |
+| 图中字母相对正文过小或过大 | `size(...)` 与 `\includegraphics[width=...]` 不一致 | 改用 `--scale compact|standard|wide` 并在 `.tex` 中按 1:1 尺寸嵌入 |
+| Linux / CI 下编译手册报字体缺失 | 缺少 macOS 字体 `Songti SC` / `Heiti SC` | 手册已内置跨平台回退，或设置 `FONT_MAP='Songti SC:Noto Serif CJK SC,Heiti SC:Noto Sans CJK SC'` |
 
-注意：Asymptote 行号指向**生成的 ASY**，不一定能无歧义映射到原始 TSQX 行。VS Code 扩展会保留生成文件供检查。
+## 3. “编译通过”不等于“图画对了”
 
-## `-p` 的正确含义
+在把插图放进讲义或试卷之前，坚持三道防线：
 
-`-p` 会**添加**前导代码；如果独立输出 PDF，一般使用 `tsqx -p`。如果需要把 TSQX 片段嵌入已有 `asy` 环境，通常不使用 `-p`，但必须自行提供被引用的函数和包。不要把这两种场景混为一谈。
-
-## 维护边界与回归
-
-1. 以 [上游 vEnhance/tsqx](https://github.com/vEnhance/tsqx) 为语言实现来源。
-2. 扩展入口为 [tsqx-compiler](https://github.com/YZDame/tsqx-compiler)；AI 生成示例参照 [tsqx-gen-skill](https://github.com/YZDame/tsqx-gen-skill)。
-3. 改动函数签名或语法说明时，至少编译 `examples/figures/` 下相关 TSQX 示例，并人工检查约束和标签。
-4. 编译通过只能证明工具链正常；**不能替代几何语义核验**。
-
-返回：[语法参考](syntax-reference.md) · [仓库首页](../README.md)。
+1. **工具链通过**：`tsqx` 与 `asy` 均返回 0 且生成非空 PDF。
+2. **数值断言通过**：对关键垂直、共线、共圆、等距关系添加 `!check_*` 断言。
+3. **视觉核验通过**：通过 VS Code 实时预览或 `--check-png` 渲染 PNG 目检标签是否压线、圆弧是否被裁切、黑白打印主题下线条层次是否清晰。

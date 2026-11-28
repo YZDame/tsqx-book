@@ -1,11 +1,19 @@
-# 基础三角形 + 内心 + 内切圆
-A = dir 110
-B = dir 210
-C = dir 330
+# 示例 1：内心、内切圆与切点垂足
+~triangle A B C
 I 45 = incenter A B C
+D 270 = foot I B C
+E 30 = foot I C A
+F 150 = foot I A B
+!check_perp(I, D, B, C, "ID perp BC");
+!check_equal_dist(I, D, I, E, "ID = IE");
+!check_equal_dist(I, D, I, F, "ID = IF");
 
-A--B--C--cycle / 0.12 lightcyan / blue
-incircle A B C / 0.15 lightgreen / darkgreen
-A--I / red
-B--I / red
-C--I / red
+A--B--C--cycle / fill1 / given
+incircle A B C / fill2 / circ2
+A--I / aux
+B--I / aux
+C--I / aux
+I--D / key
+I--E / key
+I--F / key
+rightanglemark I D C / mark

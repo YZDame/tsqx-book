@@ -1,14 +1,21 @@
-# 垂心与垂足三角形
-A = dir 95
+# 示例 2：垂心、垂足三角形与欧拉线
+A = dir 105
 B = dir 215
 C = dir 330
-H = orthocenter A B C
-D = foot H B C
-E = foot H C A
-F = foot H A B
+O 15 = circumcenter A B C
+H 165 = orthocenter A B C
+G 290 = centroid A B C
+D 270 = foot H B C
+E 30 = foot H C A
+F 150 = foot H A B
+!check_perp(A, D, B, C, "AD perp BC");
+!check_collinear(O, G, H, "Euler line O-G-H");
 
-A--B--C--cycle / 0.08 lightyellow / blue
-D--E--F--cycle / 0.15 lightcyan / red
-A--D / gray
-B--E / gray
-C--F / gray
+circumcircle A B C / circ
+A--B--C--cycle / fill1 / given
+D--E--F--cycle / fill2 / accent
+A--D / aux
+B--E / aux
+C--F / aux
+O--H / key
+rightanglemark A D C / mark

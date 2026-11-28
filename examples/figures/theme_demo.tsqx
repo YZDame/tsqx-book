@@ -1,0 +1,17 @@
+# 主题对比样板图：垂心、垂足三角形与欧拉线
+~triangle A B C
+H 165 = orthocenter A B C
+O 15 = circumcenter A B C
+D 270 = foot A B C
+E 30 = foot B C A
+F 150 = foot C A B
+!check_perp(A, D, B, C, "AD perp BC");
+
+circumcircle A B C / circ
+A--B--C--cycle / fill1 / given
+D--E--F--cycle / fill2 / circ2
+A--D / aux
+B--E / aux
+C--F / aux
+O--H / key
+rightanglemark A D C / mark

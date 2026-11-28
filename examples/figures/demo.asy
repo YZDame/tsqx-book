@@ -19,7 +19,7 @@ path CR(pair P, real r) { return circle(P, r); }
 pair IP(path p, path q) { return intersectionpoints(p,q)[0]; }
 pair OP(path p, path q) { return intersectionpoints(p,q)[1]; }
 path Line(pair A, pair B, real a=0.6, real b=a) { return (a*(A-B)+A)--(b*(B-A)+B); }
-size(8cm);
+size(5.5cm);
 //  用 .txt 也完全可以！
 pair A = dir(110);
 pair B = dir(210);

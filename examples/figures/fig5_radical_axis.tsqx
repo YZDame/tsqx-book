@@ -1,0 +1,21 @@
+# 示例 5：三圆根轴与根心
+O_1 200 = (-0.95, -0.35)
+O_2 340 = (0.95, -0.42)
+O_3 90 = (0.05, 1.15)
+!path w1 = CR(O_1, 1.05);
+!path w2 = CR(O_2, 1.15);
+!path w3 = CR(O_3, 0.92);
+!path r12 = radicalAxis(O_1, 1.05, O_2, 1.15, 1.75);
+!path r23 = radicalAxis(O_2, 1.15, O_3, 0.92, 1.75);
+!path r31 = radicalAxis(O_3, 0.92, O_1, 1.05, 1.75);
+R 15 = IP r12 r23
+!check_perp(O_1, O_2, point(r12, 0), point(r12, 1), "r12 perp O1O2");
+!check_collinear(R, point(r31, 0), point(r31, 1), "R lies on r31");
+
+w1 / fill1 / circ
+w2 / fill2 / circ2
+w3 / fillkey / accent
+O_1--O_2--O_3--cycle / aux2
+r12 / key
+r23 / key
+r31 / key

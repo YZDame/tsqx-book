@@ -1,0 +1,22 @@
+# 示例 7：圆外一点切线与极线（调和点列）
+O 220 = (0, 0)
+P 0 = (2.35, 0)
+A 110 = tangentPtR P O 1 1
+B 250 = tangentPtR P O 1 2
+C 155 = dir 155
+!path w = unitcircle;
+D 60 = otherPt w C P
+Q 125 = extension A B C D
+!check_perp(O, A, A, P, "OA perp AP");
+!check_perp(O, B, B, P, "OB perp BP");
+!check_collinear(P, D, C, "P-D-C collinear");
+
+w / fill1 / circ
+P--A / accent
+P--B / accent
+A--B / key
+P--C / given
+O--A / aux
+O--B / aux
+rightanglemark O A P / mark
+rightanglemark O B P / mark
